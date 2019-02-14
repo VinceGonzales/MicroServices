@@ -41,8 +41,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractFacade.cs" />
+    <Compile Include="IDataService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository.cs" />
     <Compile Include="Util.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Interchange.Entity\Interchange.Entity.csproj">
+      <Project>{36cbccb4-2729-4a58-879a-ec739e0e0b4e}</Project>
+      <Name>Interchange.Entity</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

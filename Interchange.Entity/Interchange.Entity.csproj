@@ -42,6 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomerInformation.cs" />
+    <Compile Include="IMatch.cs" />
+    <Compile Include="InquiryMatch.cs" />
+    <Compile Include="InvoiceInformation.cs" />
+    <Compile Include="InvoiceItem.cs" />
+    <Compile Include="IPacket.cs" />
     <Compile Include="iPayment\Allocations.cs" />
     <Compile Include="iPayment\COREFile.cs" />
     <Compile Include="Departments\IXHeader.cs" />
@@ -54,6 +60,9 @@
     <Compile Include="iPayment\InquiryResponse3.cs" />
     <Compile Include="iPayment\InquiryResponse4.cs" />
     <Compile Include="iPayment\Matches.cs" />
+    <Compile Include="IRequestPacket.cs" />
+    <Compile Include="IUpdatePacket.cs" />
+    <Compile Include="MatchInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="iPayment\SystemInterfaces.cs" />
     <Compile Include="iPayment\Tenders.cs" />

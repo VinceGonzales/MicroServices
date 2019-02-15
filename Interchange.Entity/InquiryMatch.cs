@@ -23,10 +23,17 @@ namespace Interchange.Entity
             MatchList = new List<IMatchInfo>();
         }
     }
-    public interface IInquiryMatch : IMatch
+    public interface IInquiryMatch
     {
         ICustomerInformation CustomerInfo { get; set; }
         List<IInvoiceInformation> InvoiceList { get; set; }
         List<IInvoiceItem> InvoiceItemList { get; set; }
+        List<IMatchInfo> MatchList { get; set; }
+        MatchType ResultType { get; set; }
+        string WarningMessage { get; set; }
+    }
+    public enum MatchType
+    {
+        SingleEntityMatch, MultiEntityMatch, ZeroEntityMatch
     }
 }

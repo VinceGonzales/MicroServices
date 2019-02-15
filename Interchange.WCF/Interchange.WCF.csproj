@@ -80,6 +80,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Interchange.Data\Interchange.Data.csproj">
+      <Project>{f5227d9a-3839-4386-ab2d-3cc6f709ea1c}</Project>
+      <Name>Interchange.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Interchange.Entity\Interchange.Entity.csproj">
       <Project>{36cbccb4-2729-4a58-879a-ec739e0e0b4e}</Project>
       <Name>Interchange.Entity</Name>

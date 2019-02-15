@@ -43,7 +43,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomerInformation.cs" />
-    <Compile Include="IMatch.cs" />
     <Compile Include="InquiryMatch.cs" />
     <Compile Include="InvoiceInformation.cs" />
     <Compile Include="InvoiceItem.cs" />

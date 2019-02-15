@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel;
+using System.Net.Http.Headers;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Interchange.Data
 {
@@ -31,6 +35,30 @@ namespace Interchange.Data
     }
     public static class Util
     {
+        public static async Task<T> ApiCall<T>(string uri, string username, string password)
+        {
+            using (var client = new System.Net.Http.HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+                if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+                {
+                    string authInfo = string.Format("{0}:{1}", username, password);
+                    authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authInfo);
+                }
+
+                System.Net.Http.HttpResponseMessage response = await client.GetAsync(uri);
+                response.EnsureSuccessStatusCode();
+
+                using (System.Net.Http.HttpContent content = response.Content)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    T messages = JsonConvert.DeserializeObject<T>(responseBody);
+                    return messages;
+                }
+            }
+        }
         public static string GetDeptId(Department dept)
         {
             string id = Util.StringToEnum<Department>(dept.ToString()).ToDescriptionString();

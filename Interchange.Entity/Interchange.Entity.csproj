@@ -66,6 +66,9 @@
     <Compile Include="IRequestPacket.cs" />
     <Compile Include="IUpdatePacket.cs" />
     <Compile Include="MatchInfo.cs" />
+    <Compile Include="PermitHeader.cs" />
+    <Compile Include="PermitItem.cs" />
+    <Compile Include="PermitMatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="iPayment\SystemInterfaces.cs" />
     <Compile Include="iPayment\Tenders.cs" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Interchange.Entity;
@@ -241,7 +242,81 @@ namespace Interchange.Data
 
         public override InquiryResponse3 ParseResult(IInquiryMatch match)
         {
-            throw new NotImplementedException();
+            InquiryResponse3 resp = new InquiryResponse3();
+
+            if (match.ResultType == MatchType.SingleEntityMatch)
+            {
+                resp.Type = match.ResultType.ToString();
+
+                resp.DetailData = new DetailData();
+                resp.DetailData.Group = new List<Group>();
+
+                Group grpCustInfo = new Group();
+                grpCustInfo.count = 1;
+                grpCustInfo.ID = "08002CustomerInformation";
+                grpCustInfo.DetailLine = new List<DetailLine>();
+                grpCustInfo.DetailLine.Add(GetDetail(match.CustomerInfo));
+                resp.DetailData.Group.Add(grpCustInfo);
+
+                if (!string.IsNullOrEmpty(match.WarningMessage) && !match.WarningMessage.Equals("null") && !match.WarningMessage.ToLower().Equals("ok"))
+                {
+                    Group grpWarning = new Group();
+                    grpWarning.count = 1;
+                    grpWarning.ID = "Warning";
+                    grpWarning.DetailLine = new List<DetailLine>();
+                    DetailLine detailline = new DetailLine();
+                    detailline.DetailLineItem = new List<DetailLineItem>();
+                    detailline.DetailLineItem.Add(new DetailLineItem("Header_Warning", match.WarningMessage));
+                    grpWarning.DetailLine.Add(detailline);
+                    resp.DetailData.Group.Add(grpWarning);
+                }
+
+                if (match.InvoiceList.Count > 0)
+                {
+                    Group grpInvoiceInfo = new Group();
+                    grpInvoiceInfo.count = match.InvoiceList.Count;
+                    grpInvoiceInfo.ID = "08002InvoiceInformation";
+                    grpInvoiceInfo.DetailLine = new List<DetailLine>();
+                    foreach (InvoiceInformation invoice in match.InvoiceList)
+                    {
+                        grpInvoiceInfo.DetailLine.Add(GetDetail(invoice));
+                    }
+                    resp.DetailData.Group.Add(grpInvoiceInfo);
+                }
+
+                if (match.InvoiceItemList.Count > 0)
+                {
+                    Group grpLineItems = new Group();
+                    grpLineItems.count = match.InvoiceItemList.Count;
+                    grpLineItems.ID = "08002InvoiceLineItemInformation";
+                    grpLineItems.DetailLine = new List<DetailLine>();
+                    foreach (IInvoiceItem detail in match.InvoiceItemList)
+                    {
+                        grpLineItems.DetailLine.Add(GetDetail(detail));
+                    }
+                    resp.DetailData.Group.Add(grpLineItems);
+                }
+            }
+            else if (match.ResultType == MatchType.MultiEntityMatch)
+            {
+                resp.Type = match.ResultType.ToString();
+                resp.Matches = new Matches();
+                resp.Matches.Count = match.MatchList.Count.ToString();
+                resp.Matches.Match = new List<Match>();
+                foreach (IMatchInfo cust in match.MatchList)
+                {
+                    resp.Matches.Match.Add(GetMatch(cust));
+                }
+            }
+            else if (match.ResultType == MatchType.ZeroEntityMatch)
+            {
+                resp.Type = match.ResultType.ToString();
+                resp.ErrorCode = "404";
+                resp.ErrorSummary = match.WarningMessage;
+                resp.ErrorDetail = match.WarningMessage;
+            }
+
+            return resp;
         }
 
         public override string UpdatePayment(string deptNo, string appNo, string transNo, string receiptNo, decimal payAmt, DateTime paymentDt)
@@ -252,6 +327,26 @@ namespace Interchange.Data
         public override string VoidPayment(string receiptNo)
         {
             throw new NotImplementedException();
+        }
+
+        private Match GetMatch(dynamic section)
+        {
+            Match result = new Match();
+            result.MatchItem = new List<MatchItem>();
+
+            // HACK: required AppId and DeptId
+            result.MatchItem.Add(new MatchItem("Header_DeptId", "08"));
+            result.MatchItem.Add(new MatchItem("Header_AppId", "002"));
+
+            foreach (PropertyInfo pi in section.GetType().GetProperties())
+            {
+                MatchItem matchItem = new MatchItem();
+                matchItem.name = pi.Name;
+                matchItem.value = pi.GetValue(section, null).ToString();
+                result.MatchItem.Add(matchItem);
+            }
+
+            return result;
         }
     }
 }

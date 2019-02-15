@@ -1,5 +1,7 @@
 ﻿using Interchange.Entity;
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Interchange.Data
 {
@@ -23,5 +25,16 @@ namespace Interchange.Data
         public abstract string UpdatePayment(string deptNo, string appNo, string transNo, string receiptNo, decimal payAmt, DateTime paymentDt);
 
         public abstract string VoidPayment(string receiptNo);
+
+        protected DetailLine GetDetail(dynamic section)
+        {
+            DetailLine result = new DetailLine();
+            result.DetailLineItem = new List<DetailLineItem>();
+            foreach (PropertyInfo pi in section.GetType().GetProperties())
+            {
+                result.DetailLineItem.Add(new DetailLineItem(pi.Name, pi.GetValue(section, null).ToString()));
+            }
+            return result;
+        }
     }
 }

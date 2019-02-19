@@ -28,7 +28,7 @@ namespace Interchange.Data
 
             try
             {
-                dal.SetStoredProc("INTERCHANGE.TRANSACTION_PACK.GETTRANSACTIONURL");
+                dal.SetStoredProc("TRANSACTION_PACK.GETTRANSACTIONURL");
                 dal.AddParamInString("p_deptNo", deptNo);
                 dal.AddParamInString("p_appNo", appNo);
                 dal.AddParamInString("p_transNo", transNo);

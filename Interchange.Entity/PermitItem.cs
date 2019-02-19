@@ -2,7 +2,7 @@
 
 namespace Interchange.Entity
 {
-    public class PermitItem : IPermitItem
+    public class PermitItem : IInvoiceItem
     {
         public string Header_ApplicationNbr { get; set; }
         public int Detail_FeeSort { get; set; }
@@ -16,9 +16,5 @@ namespace Interchange.Entity
         public string Detail_SubRevenueCode { get; set; }
         public string Detail_BalanceSheet { get; set; }
         public decimal Detail_PayAmount { get; set; }
-    }
-    public interface IPermitItem : IInvoiceItem
-    {
-        decimal Detail_PayAmount { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,53 +29,86 @@ namespace Interchange.Data
 
             try
             {
-                dal.SetStoredProc("TRANSACTION_PACK.GETTRANSACTIONURL");
+                dal.SetStoredProc("PCIS_POS_PACK.GETTRANSACTION");
                 dal.AddParamInString("p_deptNo", deptNo);
                 dal.AddParamInString("p_appNo", appNo);
                 dal.AddParamInString("p_transNo", transNo);
-                dal.AddParamOutString("p_URL", 1000);
+                dal.AddParamOutRefCursor("p_permitInformation", 1000);
+                dal.AddParamOutRefCursor("p_PermitLineItemInformation", 1000);
+                dal.AddParamOutRefCursor("p_bondInformation", 1000);
+                dal.AddParamOutRefCursor("p_BondLineItemInformation", 1000);
+                dal.AddParamOutString("p_warning", 1000);
+                dal.AddParamOutString("p_error", 1000);
 
                 dal.OpenConnection();
-                dal.Execute();
-                string url = dal.GetParamOutString("p_URL");
+                var dataSet = dal.FillDataSet();
+                result.WarningMessage = dal.CMD.Parameters["p_warning"].Value.ToString();
+                result.ErrorMessage = dal.CMD.Parameters["p_error"].Value.ToString();
                 dal.CloseConnection();
-                DataContainer data = GetPermit(url);
 
-                if (string.IsNullOrEmpty(data.ErrorMessage))
+                if (!string.IsNullOrEmpty(result.WarningMessage) && result.WarningMessage.ToLower().Equals("ok"))
                 {
-                    result.PermitInfo.Header_CustomerNbr = data.Header.Header_CustomerNbr;
+                    result.WarningMessage = "";
+                }
+
+                if (string.IsNullOrEmpty(result.ErrorMessage) || result.ErrorMessage.Equals("OK"))
+                {
+                    var headerInfo = dataSet.Tables["Table"].AsEnumerable().FirstOrDefault();
                     result.PermitInfo.Header_DeptId = deptNo;
                     result.PermitInfo.Header_AppId = appNo;
-                    result.PermitInfo.Header_ApplicationNbr = data.Header.Header_ApplicationNbr;
-                    result.PermitInfo.DisplayName = data.Information.BusinessName;
-                    result.PermitInfo.DisplayAddress = "";
-                    result.PermitInfo.Header_Barcode = data.Header.Header_Barcode;
-                    result.PermitInfo.Header_IsBldCrd = data.Header.Header_IsBldCrd;
-                    result.PermitInfo.Header_IsBldPermit = data.Header.Header_IsBldPermit;
-                    result.PermitInfo.Header_NoOfPermit = data.Header.Header_NoOfPermit;
-                    result.PermitInfo.Header_RPRNbr = data.Header.Header_RPRNbr;
-                    result.PermitInfo.Header_BuildingCardNbr = data.Header.Header_BuildingCardNbr;
-                    result.PermitInfo.Header_Grouping = data.Header.Header_Grouping;
-                    result.PermitInfo.Header_Origin = data.Header.Header_Origin;
-                    result.PermitInfo.Header_Balance = data.Header.Header_FeeAmt;
+                    result.PermitInfo.DisplayName = headerInfo["NAME_FULLNAME"].ToString();
+                    result.PermitInfo.DisplayAddress = headerInfo["ADDRESS_JOBADDRESS"].ToString();
+                    result.PermitInfo.Header_ApplicationNbr = headerInfo["HEADER_APPLICATIONNBR"].ToString();
+                    result.PermitInfo.Header_Barcode = headerInfo["HEADER_BARCODE"].ToString();
+                    result.PermitInfo.Header_IsBldCrd = headerInfo["HEADER_ISBLDCRD"].ToString() == "F" ? false : true;
+                    result.PermitInfo.Header_IsBldPermit = headerInfo["HEADER_ISBLDPERMIT"].ToString() == "F" ? false : true;
+                    result.PermitInfo.Header_NoOfPermit = int.Parse(headerInfo["HEADER_NOOFPERMITS"].ToString());
+                    result.PermitInfo.Header_RPRNbr = int.Parse(headerInfo["HEADER_RPRNBR"].ToString());
+                    result.PermitInfo.Header_BuildingCardNbr = headerInfo["HEADER_BUILDINGCARDNBR"].ToString();
+                    result.PermitInfo.Header_Grouping = headerInfo["HEADER_GROUPING"].ToString();
+                    result.PermitInfo.Header_CustomerNbr = headerInfo["HEADER_CUSTOMERNBR"].ToString();
+                    result.PermitInfo.Header_Origin = headerInfo["HEADER_ORIGIN"].ToString();
+                    result.PermitInfo.Header_FeeAmt = decimal.Parse(headerInfo["HEADER_BALANCE"].ToString());
 
-                    foreach (IXDetail detail in data.Details)
+                    var detailList = dataSet.Tables["Table1"].AsEnumerable();
+                    foreach (DataRow row in detailList)
                     {
-                        IPermitItem item = new PermitItem();
-                        item.Header_ApplicationNbr = data.Header.Header_ApplicationNbr;
-                        item.Detail_FeeSort = detail.Detail_FeeSort;
-                        item.Detail_Description = detail.Detail_Description;
-                        item.Detail_BalanceSheet = detail.Detail_BalanceSheet;
-                        item.Detail_Dept = detail.Detail_Dept;
-                        item.Detail_Fund = detail.Detail_Fund;
-                        item.Detail_RevenueCode = detail.Detail_RevenueCode;
-                        item.Detail_SubRevenueCode = detail.Detail_SubRevenueCode;
-                        item.Detail_Balance = detail.Detail_FeeAmt;
-                        item.Detail_PayAmount = detail.Detail_FeeAmt;
+                        IInvoiceItem item = new InvoiceItem();
+                        item.Header_ApplicationNbr = headerInfo["HEADER_APPLICATIONNBR"].ToString();
+                        item.Detail_FeeSort = int.Parse(row["DETAIL_FEESORT"].ToString());
+                        item.Detail_Description = row["DETAIL_DESCRIPTION"].ToString();
+                        item.Detail_FeeAmt = decimal.Parse(row["DETAIL_BALANCE"].ToString());
+                        item.Detail_AmtPaid = 0M;
+                        item.Detail_Balance = decimal.Parse(row["DETAIL_BALANCE"].ToString());
+                        item.Detail_PayAmount = decimal.Parse(row["DETAIL_BALANCE"].ToString());
+                        item.Detail_Dept = row["DETAIL_DEPT"].ToString();
+                        item.Detail_Fund = row["DETAIL_FUND"].ToString();
+                        item.Detail_RevenueCode = row["DETAIL_REVENUECODE"].ToString();
+                        item.Detail_SubRevenueCode = row["DETAIL_SUBREVENUECODE"].ToString();
+                        item.Detail_BalanceSheet = row["DETAIL_BALANCESHEET"].ToString();
                         result.PermitItems.Add(item);
                     }
+
+                    var info = dataSet.Tables["Table2"].AsEnumerable().FirstOrDefault();
+                    IInvoiceInformation bondInfo = new InvoiceInformation();
+                    bondInfo.Header_ApplicationNbr = info["HEADER_APPLICATIONNBR"].ToString();
+                    bondInfo.Header_Balance = decimal.Parse(info["DETAIL_BALANCE"].ToString());
+                    result.InvoiceList.Add(bondInfo);
+
+                    var bondItemList = dataSet.Tables["Table3"].AsEnumerable();
+                    foreach (DataRow row in bondItemList)
+                    {
+                        IInvoiceItem bondItem = new InvoiceItem();
+                        bondItem.Header_ApplicationNbr = row["HEADER_APPLICATIONNBR"].ToString();
+                        bondItem.Detail_FeeSort = int.Parse(row["DETAIL_FEESORT"].ToString());
+                        bondItem.Detail_Description = row["DETAIL_DESCRIPTION"].ToString();
+                        bondItem.Detail_FeeAmt = decimal.Parse(row["DETAIL_FEEAMT"].ToString());
+                        bondItem.Detail_AmtPaid = decimal.Parse(row["DETAIL_AMTPAID"].ToString());
+                        bondItem.Detail_Balance = decimal.Parse(row["DETAIL_BALANCE"].ToString());
+                        result.InvoiceItemList.Add(bondItem);
+                    }
+                    result.ErrorMessage = "";
                 }
-                result.WarningMessage = data.ErrorMessage;
             }
             catch (Exception exc)
             {
@@ -98,21 +132,6 @@ namespace Interchange.Data
         public override string VoidPayment(string receiptNo)
         {
             throw new NotImplementedException();
-        }
-
-        private DataContainer GetPermit(string url)
-        {
-            try
-            {
-                Task<DataContainer> result = Task.Run(async () => await Util.ApiCall<DataContainer>(url, "", ""));
-                result.Wait();
-                return result.Result;
-            }
-            catch (Exception exc)
-            {
-                exc.HelpLink = "";
-                throw exc;
-            }
         }
     }
 }

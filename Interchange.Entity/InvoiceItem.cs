@@ -14,6 +14,7 @@ namespace Interchange.Entity
         public decimal Detail_FeeAmt { get; set; }
         public decimal Detail_AmtPaid { get; set; }
         public decimal Detail_Balance { get; set; }
+        public decimal Detail_PayAmount { get; set; }
         public string Detail_Dept { get; set; }
         public string Detail_Fund { get; set; }
         public string Detail_RevenueCode { get; set; }
@@ -28,6 +29,7 @@ namespace Interchange.Entity
         decimal Detail_FeeAmt { get; set; }
         decimal Detail_AmtPaid { get; set; }
         decimal Detail_Balance { get; set; }
+        decimal Detail_PayAmount { get; set; }
         string Detail_Dept { get; set; }
         string Detail_Fund { get; set; }
         string Detail_RevenueCode { get; set; }

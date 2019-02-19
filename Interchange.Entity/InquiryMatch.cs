@@ -14,6 +14,7 @@ namespace Interchange.Entity
         public List<IMatchInfo> MatchList { get; set; }
         public MatchType ResultType { get; set; }
         public string WarningMessage { get; set; }
+        public string ErrorMessage { get; set; }
 
         public InquiryMatch()
         {
@@ -31,6 +32,7 @@ namespace Interchange.Entity
         List<IMatchInfo> MatchList { get; set; }
         MatchType ResultType { get; set; }
         string WarningMessage { get; set; }
+        string ErrorMessage { get; set; }
     }
     public enum MatchType
     {

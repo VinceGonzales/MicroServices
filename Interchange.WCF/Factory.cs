@@ -20,7 +20,7 @@ namespace Interchange.WCF
                     using (AbstractFacade facade = new AdoFacade())
                     {
                         service = new Finance(facade);
-                        response = base.ProcessRequest(request);
+                        response = base.ProcessInquiry(request);
                     }
                 }
                 else if (appNo.Equals("001"))
@@ -28,7 +28,7 @@ namespace Interchange.WCF
                     using (AbstractFacade facade = new AdoFacade())
                     {
                         service = new Permit(facade);
-                        response = base.ProcessRequest(request);
+                        response = base.ProcessInquiry(request);
                     }
                 }
                 else

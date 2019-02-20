@@ -1,13 +1,15 @@
 ﻿using Interchange.Entity;
+using System;
 using System.Linq;
 
 namespace Interchange.Data
 {
-    public class Repository<T> where T : class, IDataService
+    public class Repository<T> : IRepository<T> 
+        where T : class, IDataService
     {
         protected T service;
 
-        protected InquiryResponse3 ProcessRequest(InquiryRequest request)
+        public InquiryResponse3 ProcessInquiry(InquiryRequest request)
         {
             IInquiryMatch result = null;
             QueryKey key1 = request.QueryKeys.QueryKey.FirstOrDefault(x => x.name.ToLower().Equals("header_applicationnbr"));
@@ -40,5 +42,19 @@ namespace Interchange.Data
             InquiryResponse3 response = service.ParseResult(result);
             return response;
         }
+        public UpdateResponse ProcessUpdate(UpdateRequest request)
+        {
+            throw new NotImplementedException();
+        }
+        public VoidResponse ProcessVoid(VoidRequest request)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public interface IRepository<T> where T : class, IDataService
+    {
+        InquiryResponse3 ProcessInquiry(InquiryRequest request);
+        UpdateResponse ProcessUpdate(UpdateRequest request);
+        VoidResponse ProcessVoid(VoidRequest request);
     }
 }

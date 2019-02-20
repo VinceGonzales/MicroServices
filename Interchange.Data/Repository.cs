@@ -8,13 +8,13 @@ namespace Interchange.Data
         where T : class, IDataService
     {
         protected T service;
+        protected string deptNo;
+        protected string appNo;
 
         public InquiryResponse3 ProcessInquiry(InquiryRequest request)
         {
             IInquiryMatch result = null;
             QueryKey key1 = request.QueryKeys.QueryKey.FirstOrDefault(x => x.name.ToLower().Equals("header_applicationnbr"));
-            string deptNo = request.QueryKeys.QueryKey.FirstOrDefault(x => x.name.ToLower().Equals("header_deptid")).value;
-            string appNo = request.QueryKeys.QueryKey.FirstOrDefault(x => x.name.ToLower().Equals("header_appid")).value;
 
             if (key1 != null)
             {

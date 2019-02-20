@@ -3,14 +3,14 @@ using System.ServiceModel;
 
 namespace Interchange.WCF
 {
-    [ServiceContract]
+    [ServiceContract, XmlSerializerFormat]
     public interface IHubExternal
     {
-        [OperationContract]
+        [OperationContract, XmlSerializerFormat(Style = OperationFormatStyle.Document)]
         InquiryResponse3 InquiryRequest3Operation(InquiryRequest myInquiryRequest);
-        [OperationContract]
+        [OperationContract, XmlSerializerFormat(Style = OperationFormatStyle.Document)]
         UpdateResponse UpdateRequestOperation(UpdateRequest myUpdateRequest);
-        [OperationContract]
+        [OperationContract, XmlSerializerFormat(Style = OperationFormatStyle.Document)]
         VoidResponse VoidRequestOperation(VoidRequest myVoidRequest);
     }
 }

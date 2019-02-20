@@ -11,23 +11,23 @@ namespace Interchange.WCF
         {
             InquiryResponse3 response = new InquiryResponse3();
 
-            string deptNo = request.QueryKeys.QueryKey.FirstOrDefault(x => x.name.ToLower().Equals("header_deptid")).value;
-            string appNo = request.QueryKeys.QueryKey.FirstOrDefault(x => x.name.ToLower().Equals("header_appid")).value;
-            if (deptNo == Util.GetDeptId(Department.LADBS))
+            base.deptNo = request.QueryKeys.QueryKey.FirstOrDefault(x => x.name.ToLower().Equals("header_deptid")).value;
+            base.appNo = request.QueryKeys.QueryKey.FirstOrDefault(x => x.name.ToLower().Equals("header_appid")).value;
+            if (base.deptNo == Util.GetDeptId(Department.LADBS))
             {
-                if (appNo.Equals("002"))
+                if (base.appNo.Equals("002"))
                 {
                     using (AbstractFacade facade = new AdoFacade())
                     {
-                        service = new Finance(facade);
+                        base.service = new Finance(facade);
                         response = base.ProcessInquiry(request);
                     }
                 }
-                else if (appNo.Equals("001"))
+                else if (base.appNo.Equals("001"))
                 {
                     using (AbstractFacade facade = new AdoFacade())
                     {
-                        service = new Permit(facade);
+                        base.service = new Permit(facade);
                         response = base.ProcessInquiry(request);
                     }
                 }

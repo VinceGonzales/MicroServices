@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Interchange.Data
 {
-    public abstract class AbstractFacade
+    public abstract class AbstractFacade : IDisposable
     {
         private string _connString;
         private SqlConnection _connection = null;

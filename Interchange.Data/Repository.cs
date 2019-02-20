@@ -3,7 +3,8 @@ using System.Linq;
 
 namespace Interchange.Data
 {
-    public class Repository<T> where T : class, IDataService
+    public class Repository<T> : IRepository<T> 
+        where T : class, IDataService
     {
         private T service;
         public Repository(T svc)
@@ -44,5 +45,9 @@ namespace Interchange.Data
             InquiryResponse3 response = service.ParseResult(result);
             return response;
         }
+    }
+    public interface IRepository<T>
+    {
+        InquiryResponse3 GetRequest(InquiryRequest request);
     }
 }

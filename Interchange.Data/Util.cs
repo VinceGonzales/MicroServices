@@ -33,6 +33,10 @@ namespace Interchange.Data
         [Description("94")]
         DOT = 94
     }
+    public enum ResponseType
+    {
+        Failure, Success
+    }
     public static class Util
     {
         public static async Task<T> ApiCall<T>(string uri, string username, string password)

@@ -121,7 +121,76 @@ namespace Interchange.Data
 
         public override InquiryResponse3 ParseResult(IInquiryMatch match)
         {
-            throw new NotImplementedException();
+            InquiryResponse3 resp = new InquiryResponse3();
+            IPermitMatch details = (PermitMatch)match;
+
+            if (string.IsNullOrEmpty(details.ErrorMessage))
+            {
+                resp.Type = MatchType.SingleEntityMatch.ToString();
+                resp.DetailData = new DetailData();
+                resp.DetailData.Group = new List<Group>();
+
+                Group grpPermitInfo = new Group();
+                grpPermitInfo.count = 1;
+                grpPermitInfo.ID = "08001PermitInformation";
+                grpPermitInfo.DetailLine = new List<DetailLine>();
+                grpPermitInfo.DetailLine.Add(GetDetail(details.PermitInfo));
+                resp.DetailData.Group.Add(grpPermitInfo);
+
+                if (!string.IsNullOrEmpty(details.WarningMessage) && !details.WarningMessage.Equals("null") && !details.WarningMessage.ToLower().Equals("ok"))
+                {
+                    Group grpWarning = new Group();
+                    grpWarning.count = 1;
+                    grpWarning.ID = "Warning";
+                    grpWarning.DetailLine = new List<DetailLine>();
+                    DetailLine detailline = new DetailLine();
+                    detailline.DetailLineItem = new List<DetailLineItem>();
+                    detailline.DetailLineItem.Add(new DetailLineItem("Header_Warning", details.WarningMessage));
+                    grpWarning.DetailLine.Add(detailline);
+                    resp.DetailData.Group.Add(grpWarning);
+                }
+
+                Group grpPermitItem = new Group();
+                grpPermitItem.count = details.PermitItems.Count;
+                grpPermitItem.ID = "08001PermitLineItemInformation";
+                grpPermitItem.DetailLine = new List<DetailLine>();
+                foreach (IInvoiceItem detail in details.PermitItems)
+                {
+                    grpPermitItem.DetailLine.Add(GetDetail(detail));
+                }
+                resp.DetailData.Group.Add(grpPermitItem);
+
+                if (details.InvoiceList != null && details.InvoiceList.Count > 0)
+                {
+                    Group grpBondInformation = new Group();
+                    grpBondInformation.count = 1;
+                    grpBondInformation.ID = "08001BondInformation";
+                    grpBondInformation.DetailLine = new List<DetailLine>();
+                    foreach (IInvoiceInformation info in details.InvoiceList)
+                    {
+                        grpBondInformation.DetailLine.Add(GetDetail(info));
+                    }
+                    resp.DetailData.Group.Add(grpBondInformation);
+
+                    Group grpBondLineItemInformation = new Group();
+                    grpBondLineItemInformation.count = details.InvoiceItemList.Count;
+                    grpBondLineItemInformation.ID = "08001BondLineItemInformation";
+                    grpBondLineItemInformation.DetailLine = new List<DetailLine>();
+                    foreach (IInvoiceItem item in details.InvoiceItemList)
+                    {
+                        grpBondLineItemInformation.DetailLine.Add(GetDetail(item));
+                    }
+                    resp.DetailData.Group.Add(grpBondLineItemInformation);
+                }
+            }
+            else
+            {
+                resp.Type = MatchType.ZeroEntityMatch.ToString();
+                resp.ErrorCode = "404";
+                resp.ErrorSummary = details.ErrorMessage;
+                resp.ErrorDetail = details.ErrorMessage;
+            }
+            return resp;
         }
 
         public override string UpdatePayment(string deptNo, string appNo, string transNo, string receiptNo, decimal payAmt, DateTime paymentDt)

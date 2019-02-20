@@ -130,6 +130,8 @@ namespace Interchange.Data
                     foreach (DataRow row in result)
                     {
                         IMatchInfo customer = new MatchInfo();
+                        customer.Header_DeptId = deptNo;
+                        customer.Header_AppId = appNo;
                         customer.Header_CustomerNbr = row["HEADER_CUSTOMERNBR"].ToString();
                         customer.DisplayName = row["NAME_BUSINESSNAME"].ToString();
                         customer.Name_LName = row["NAME_LNAME"].ToString();
@@ -333,10 +335,6 @@ namespace Interchange.Data
         {
             Match result = new Match();
             result.MatchItem = new List<MatchItem>();
-
-            // HACK: required AppId and DeptId
-            result.MatchItem.Add(new MatchItem("Header_DeptId", "08"));
-            result.MatchItem.Add(new MatchItem("Header_AppId", "002"));
 
             foreach (PropertyInfo pi in section.GetType().GetProperties())
             {

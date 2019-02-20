@@ -1,18 +1,18 @@
 ﻿using Interchange.Data;
 using Interchange.Entity;
+using System;
 using System.Linq;
 
 namespace Interchange.WCF
 {
-    public class Factory
+    public class Factory : Repository<IDataService>, IFactory
     {
-        private IRepository<DataService> repo;
-        private IDataService service;
-
-        public InquiryResponse3 GetRequest(InquiryRequest req)
+        public InquiryResponse3 GetRequest(InquiryRequest request)
         {
-            string deptNo = req.QueryKeys.QueryKey.FirstOrDefault(x => x.name.ToLower().Equals("header_deptid")).value;
-            string appNo = req.QueryKeys.QueryKey.FirstOrDefault(x => x.name.ToLower().Equals("header_appid")).value;
+            InquiryResponse3 response = new InquiryResponse3();
+
+            string deptNo = request.QueryKeys.QueryKey.FirstOrDefault(x => x.name.ToLower().Equals("header_deptid")).value;
+            string appNo = request.QueryKeys.QueryKey.FirstOrDefault(x => x.name.ToLower().Equals("header_appid")).value;
             if (deptNo == Util.GetDeptId(Department.LADBS))
             {
                 if (appNo.Equals("002"))
@@ -20,24 +20,47 @@ namespace Interchange.WCF
                     using (AbstractFacade facade = new AdoFacade())
                     {
                         service = new Finance(facade);
-                        repo = new Repository<Finance>(service);
+                        response = base.ProcessRequest(request);
                     }
                 }
                 else if (appNo.Equals("001"))
                 {
-                    //
+                    using (AbstractFacade facade = new AdoFacade())
+                    {
+                        service = new Permit(facade);
+                        response = base.ProcessRequest(request);
+                    }
+                }
+                else
+                {
+                    ReturnBadRequest(response);
                 }
             }
+            return response;
+        }
+        public UpdateResponse PayTransaction(UpdateRequest request)
+        {
+            throw new NotImplementedException();
+        }
+        public VoidResponse VoidTransaction(VoidRequest request)
+        {
+            throw new NotImplementedException();
         }
 
         #region Private Methods
-        
+        private void ReturnBadRequest(InquiryResponse3 response)
+        {
+            response.Type = Interchange.Data.ResponseType.Failure.ToString();
+            response.ErrorCode = "400";
+            response.ErrorSummary = "Bad Request";
+            response.ErrorDetail = "The server cannot process the request due to faulty data structure";
+        }
         #endregion
     }
     public interface IFactory
     {
-        InquiryResponse3 GetRequest(InquiryRequest req);
-        UpdateResponse PayTransaction(UpdateRequest req);
-        VoidResponse VoidTransaction(VoidRequest req);
+        InquiryResponse3 GetRequest(InquiryRequest request);
+        UpdateResponse PayTransaction(UpdateRequest request);
+        VoidResponse VoidTransaction(VoidRequest request);
     }
 }

@@ -3,16 +3,11 @@ using System.Linq;
 
 namespace Interchange.Data
 {
-    public class Repository<T> : IRepository<T> 
-        where T : class, IDataService
+    public class Repository<T> where T : class, IDataService
     {
-        private T service;
-        public Repository(T svc)
-        {
-            service = svc;
-        }
+        protected T service;
 
-        public InquiryResponse3 GetRequest(InquiryRequest request)
+        protected InquiryResponse3 ProcessRequest(InquiryRequest request)
         {
             IInquiryMatch result = null;
             QueryKey key1 = request.QueryKeys.QueryKey.FirstOrDefault(x => x.name.ToLower().Equals("header_applicationnbr"));
@@ -45,9 +40,5 @@ namespace Interchange.Data
             InquiryResponse3 response = service.ParseResult(result);
             return response;
         }
-    }
-    public interface IRepository<T>
-    {
-        InquiryResponse3 GetRequest(InquiryRequest request);
     }
 }

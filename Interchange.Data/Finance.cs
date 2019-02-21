@@ -11,7 +11,7 @@ namespace Interchange.Data
 {
     public class Finance : DataService, IDataService
     {
-        public Finance(AbstractFacade facade) : base(facade)
+        public Finance(string connectionstring, AbstractFacade facade) : base(connectionstring, facade)
         { }
 
         public override IInquiryMatch GetByAcctNumber(string deptNo, string appNo, string customerNo)

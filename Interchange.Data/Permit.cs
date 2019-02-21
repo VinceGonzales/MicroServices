@@ -10,7 +10,7 @@ namespace Interchange.Data
 {
     public class Permit : DataService, IDataService
     {
-        public Permit(AbstractFacade facade) : base(facade)
+        public Permit(string connectionstring, AbstractFacade facade) : base(connectionstring, facade)
         { }
 
         public override IInquiryMatch GetByAcctNumber(string deptNo, string appNo, string customerNo)

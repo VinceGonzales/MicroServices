@@ -1,6 +1,7 @@
 ﻿using Interchange.Entity;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Reflection;
 
 namespace Interchange.Data
@@ -9,9 +10,10 @@ namespace Interchange.Data
     {
         protected AbstractFacade dal;
 
-        public DataService(AbstractFacade facade)
+        public DataService(string connectionstring, AbstractFacade facade)
         {
             dal = facade;
+            dal.ConnectionString = ConfigurationManager.AppSettings[connectionstring];
         }
 
         public abstract IInquiryMatch GetByAcctNumber(string deptNo, string appNo, string customerNo);

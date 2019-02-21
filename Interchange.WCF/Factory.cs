@@ -19,7 +19,7 @@ namespace Interchange.WCF
                 {
                     using (AbstractFacade facade = new AdoFacade())
                     {
-                        base.service = new Finance("defaultConnectionString", facade);
+                        base.service = new Finance("DefaultConnectionString", facade);
                         response = base.ProcessInquiry(request);
                     }
                 }
@@ -27,7 +27,7 @@ namespace Interchange.WCF
                 {
                     using (AbstractFacade facade = new AdoFacade())
                     {
-                        base.service = new Permit("defaultConnectionString", facade);
+                        base.service = new Permit("DefaultConnectionString", facade);
                         response = base.ProcessInquiry(request);
                     }
                 }
@@ -35,6 +35,10 @@ namespace Interchange.WCF
                 {
                     ReturnBadRequest(response);
                 }
+            }
+            else
+            {
+                ReturnBadRequest(response);
             }
             return response;
         }

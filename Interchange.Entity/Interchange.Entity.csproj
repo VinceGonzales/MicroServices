@@ -32,6 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
@@ -79,6 +80,13 @@
     <Compile Include="iPayment\VoidRequest.cs" />
     <Compile Include="iPayment\VoidResponse.cs" />
     <Compile Include="Departments\TransactionPayment.cs" />
+    <Compile Include="SSDB\Abstract\IInterchangeDetail.cs" />
+    <Compile Include="SSDB\Abstract\IInterchangeHeader.cs" />
+    <Compile Include="SSDB\Concrete\InterchangeAddress.cs" />
+    <Compile Include="SSDB\Concrete\InterchangeDetail.cs" />
+    <Compile Include="SSDB\Concrete\InterchangeHeader.cs" />
+    <Compile Include="SSDB\Concrete\InterchangeName.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

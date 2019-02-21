@@ -78,6 +78,7 @@
     <Compile Include="iPayment\UpdateResponse.cs" />
     <Compile Include="iPayment\VoidRequest.cs" />
     <Compile Include="iPayment\VoidResponse.cs" />
+    <Compile Include="Departments\TransactionPayment.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -69,7 +69,9 @@
   <ItemGroup>
     <Compile Include="Factory.cs" />
     <Compile Include="HubExternal.cs" />
+    <Compile Include="HubInternal.cs" />
     <Compile Include="IHubExternal.cs" />
+    <Compile Include="IHubInternal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

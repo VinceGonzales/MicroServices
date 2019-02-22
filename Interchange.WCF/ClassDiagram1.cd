@@ -41,6 +41,9 @@
   </Class>
   <Class Name="Interchange.Data.AbstractFacade">
     <Position X="0.5" Y="0.75" Width="5" />
+    <Members>
+      <Method Name="AbstractFacade" Hidden="true" />
+    </Members>
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>

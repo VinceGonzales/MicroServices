@@ -159,20 +159,18 @@ namespace Interchange.Data
             _command.Parameters.Add(param);
         }
 
-        public virtual void AddParamOutDecimal(string paramName, decimal paramValue)
+        public virtual void AddParamOutDecimal(string paramName)
         {
-            SqlParameter param = new SqlParameter(paramName, paramValue)
+            SqlParameter param = new SqlParameter(paramName, SqlDbType.Decimal)
             {
-                Direction = ParameterDirection.Output,
-                SqlDbType = SqlDbType.Decimal,
-                Value = paramValue
+                Direction = ParameterDirection.Output
             };
             _command.Parameters.Add(param);
         }
 
-        public virtual void AddParamOutString(string paramNamee, int size)
+        public virtual void AddParamOutString(string paramName, int size)
         {
-            SqlParameter param = new SqlParameter(paramNamee, SqlDbType.VarChar)
+            SqlParameter param = new SqlParameter(paramName, SqlDbType.VarChar)
             {
                 Direction = ParameterDirection.Output,
                 Size = size

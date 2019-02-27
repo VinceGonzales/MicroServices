@@ -61,7 +61,7 @@ namespace Interchange.WCF
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-            kernel.Bind<IFactory>().To<Factory>();
+            kernel.Bind<IFactory>().To<Factory>().WithConstructorArgument<AbstractFacade>(new AdoFacade());
             kernel.Bind<IDbInternal>().To<DbInternal>().WithConstructorArgument<string>("DefaultConnectionString").WithConstructorArgument<AbstractFacade>(new AdoFacade());
         }
     }

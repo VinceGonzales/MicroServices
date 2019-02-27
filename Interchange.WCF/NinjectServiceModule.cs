@@ -7,7 +7,7 @@ namespace Interchange.WCF
     {
         public override void Load()
         {
-            //this.Bind<IFactory>().To<Factory>();
+            //this.Bind<IFactory>().To<Factory>().WithConstructorArgument<AbstractFacade>(new AdoFacade());
             //this.Bind<IDbInternal>().To<DbInternal>().WithConstructorArgument<string>("DefaultConnectionString").WithConstructorArgument<AbstractFacade>(new AdoFacade());
         }
     }

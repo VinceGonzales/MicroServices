@@ -57,6 +57,7 @@
     <Compile Include="Context\InterchangeDB.cs" />
     <Compile Include="DataService.cs" />
     <Compile Include="Finance.cs" />
+    <Compile Include="GenericDepartment.cs" />
     <Compile Include="IDataService.cs" />
     <Compile Include="DbInternal.cs" />
     <Compile Include="Permit.cs" />

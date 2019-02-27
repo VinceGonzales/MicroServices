@@ -7,6 +7,13 @@ namespace Interchange.WCF
 {
     public class Factory : Repository<IDataService>, IFactory
     {
+        private AbstractFacade facade;
+
+        public Factory(AbstractFacade face)
+        {
+            facade = face;
+        }
+
         public InquiryResponse3 GetRequest(InquiryRequest request)
         {
             InquiryResponse3 response = new InquiryResponse3();
@@ -17,7 +24,7 @@ namespace Interchange.WCF
             {
                 if (base.appNo.Equals("002"))
                 {
-                    using (AbstractFacade facade = new AdoFacade())
+                    using (facade)
                     {
                         base.service = new Finance("DefaultConnectionString", facade);
                         response = base.ProcessInquiry(request);
@@ -25,9 +32,17 @@ namespace Interchange.WCF
                 }
                 else if (base.appNo.Equals("001"))
                 {
-                    using (AbstractFacade facade = new AdoFacade())
+                    using (facade)
                     {
                         base.service = new Permit("DefaultConnectionString", facade);
+                        response = base.ProcessInquiry(request);
+                    }
+                }
+                else if (base.appNo.Equals("003"))
+                {
+                    using (facade)
+                    {
+                        base.service = new GenericDepartment("DefaultConnectionString", facade);
                         response = base.ProcessInquiry(request);
                     }
                 }

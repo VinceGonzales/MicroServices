@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Interchange.Entity;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Interchange.Entity;
 
 namespace Interchange.Data
 {
@@ -46,7 +44,7 @@ namespace Interchange.Data
                 result.ErrorMessage = dal.CMD.Parameters["p_error"].Value.ToString();
                 dal.CloseConnection();
 
-                if (!string.IsNullOrEmpty(result.WarningMessage) && result.WarningMessage.ToLower().Equals("ok"))
+                if (!string.IsNullOrEmpty(result.WarningMessage) && !result.WarningMessage.ToLower().Equals("ok"))
                 {
                     result.WarningMessage = "";
                 }
@@ -195,7 +193,29 @@ namespace Interchange.Data
 
         public override string UpdatePayment(string deptNo, string appNo, string transNo, string receiptNo, decimal payAmt, DateTime paymentDt)
         {
-            throw new NotImplementedException();
+            string result = "";
+            try
+            {
+                dal.SetStoredProc("PCIS_POS_PACK.UPDATEPERMITPAYMENT");
+                dal.AddParamInString("p_transNo", transNo);
+                dal.AddParamInDecimal("p_pmtTotAmt", payAmt);
+                dal.AddParamInString("p_receiptNbr", receiptNo);
+                dal.AddParamOutString("p_warning", 1000);
+
+                dal.OpenConnection();
+                dal.Execute();
+                result = dal.GetParamOutString("p_warning");
+                dal.CloseConnection();
+
+                result = receiptNo;
+            }
+            catch (Exception exc)
+            {
+                exc.HelpLink = "";
+                throw exc;
+            }
+
+            return result;
         }
 
         public override string VoidPayment(string receiptNo)

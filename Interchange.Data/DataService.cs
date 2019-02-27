@@ -34,7 +34,15 @@ namespace Interchange.Data
             result.DetailLineItem = new List<DetailLineItem>();
             foreach (PropertyInfo pi in section.GetType().GetProperties())
             {
-                result.DetailLineItem.Add(new DetailLineItem(pi.Name, pi.GetValue(section, null).ToString()));
+                string detailName = pi.Name;
+                if (pi.GetValue(section, null) != null)
+                {
+                    result.DetailLineItem.Add(new DetailLineItem(detailName, pi.GetValue(section, null).ToString()));
+                }
+                else
+                {
+                    result.DetailLineItem.Add(new DetailLineItem(detailName, ""));
+                }
             }
             return result;
         }
